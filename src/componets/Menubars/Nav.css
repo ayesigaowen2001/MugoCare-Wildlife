@@ -1,0 +1,31 @@
+.custom-menubar {
+  background-color: #c0c0c0; /* Silver background */
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.custom-menubar h4 {
+  color: #000;
+}
+
+.custom-menubar .p-menubar {
+  background-color: #c0c0c0 !important;
+  border: none;
+}
+
+.custom-menubar .p-menubar-root-list > .p-menubaritem > .p-menuitem-link {
+  color: #000 !important;
+}
+
+.custom-menubar .p-menubar-root-list > .p-menubaritem > .p-menuitem-link:hover {
+  background-color: #a9a9a9 !important; /* Darker silver on hover */
+}
+
+.p-inputgroup .p-inputtext {
+  border-radius: 5px 0 0 5px;
+}
+
+.p-inputgroup .p-button {
+  border-radius: 0 5px 5px 0;
+}

@@ -1,0 +1,34 @@
+.custom-megamenu .p-megamenu-panel {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    max-height: calc(100vh - 150px); /* Adjust based on your layout */
+  }
+  
+  .custom-megamenu .p-megamenu-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  
+  .custom-megamenu .p-megamenu-column {
+    flex: 1 1 calc(33.333% - 1rem); /* 3 columns */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0.5rem;
+  }
+  
+  .custom-megamenu .p-menuitem-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    color: black;
+  }
+  
+  .custom-megamenu .pi {
+    font-size: 2em;
+    margin-bottom: 0.5rem;
+  }
+  

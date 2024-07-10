@@ -1,0 +1,18 @@
+.signup-container {
+  height: 100vh; /* Set the height of the container to the full viewport height */
+  align-self: center;
+}
+
+.signup-card {
+  width: 70%; /* Set the width of the card */
+  max-width: 400px; /* Limit the maximum width of the card */
+  left: 50px;
+  
+}
+.p-dialog .p-dialog-header {
+  cursor: move;
+}
+
+.p-dialog-dragging {
+  user-select: none;
+}
