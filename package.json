@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "homepage": "https://{ayesigaowen2001}.github.io/{Wildlife}",
+  "homepage": "https://{ayesigaowen2001}.github.io/{MugoCare-Wildlife}",
   "devDependencies": {
     "@types/axios": "^0.14.0",
     "@types/node": "^20.14.10",
@@ -36,6 +36,8 @@
     "@mui/material": "^5.15.12",
     "@types/bingmaps": "^0.0.1",
     "axios": "^1.6.8",
+    "azure-maps-control": "^3.1.2",
+    "azure-maps-drawing-tools": "^1.0.3",
     "bingmaps-react": "^1.2.10",
     "bootstrap": "^5.3.3",
     "core-js": "^3.36.1",
