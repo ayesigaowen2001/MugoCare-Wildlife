@@ -6,7 +6,9 @@ import "../node_modules/primeflex/primeflex.css";
 import "primereact/resources/themes/bootstrap4-light-blue/theme.css";
 import "primeicons/primeicons.css";
 import "primereact/resources/primereact.min.css";
-//import "azure-maps-drawing-tools/dist/atlas-drawing.min.css";
+import "azure-maps-drawing-tools/dist/atlas-drawing.min.css";
+
+import "react-material-symbols/rounded";
 declare namespace Microsoft {
   export module Maps {
     export class Map {

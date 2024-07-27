@@ -1,0 +1,48 @@
+.text-white {
+    color: white;
+  }
+  /* .circular-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #ffffff20; 
+    color: white; 
+    padding-top: 10px;
+  } */
+  .template-demo-container {
+    /* display: flex; */
+    flex-direction: column;
+    /* align-items: center; */
+    background-color: black;
+    height: 550px;
+    padding-top: 10px;
+    padding: 20px;
+    padding-left: 30px;
+  }
+  
+  .option-item {
+    cursor: pointer;
+    padding: 5px;
+    margin: 5px;
+    border-radius: 5px;
+    background-color: rgba(2, 2, 2, 0.7);
+    display: flex;
+    align-items: center;
+    /* margin-left: 10px;
+    margin-top: 20px; */
+  }
+  
+  .option-item.selected {
+    background-color: rgba(248, 246, 246, 0.9);
+  }
+  
+  .circular-icon {
+    border: 2px solid white;
+    border-radius: 50%;
+    padding: 5px;
+    margin-right: 10px;
+  }
+  

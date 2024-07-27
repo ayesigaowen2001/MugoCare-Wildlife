@@ -1,73 +1,140 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import Navbar from "../componets/Menubars/Menubar";
 import TemplateDemo from "../componets/DisplayData/Content";
 import MainContent from "../componets/DisplayData/MainContent";
-import Notifications from "../componets/Notifications/Notifications";
 import CustomSidebar from "../componets/Sidebars/Sidebar";
 import ResizableDialog from "../Geofencing/geoofencingDialogbox";
+import FilterPanel from "../componets/Notifications/Notifications";
+import MapComponent from "../componets/Location/bingmaps.d";
+import {
+  AnimalContext,
+  AnimalContextType,
+} from "../Data/StateManagement/animalContext";
 import "primereact/resources/themes/saga-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 
 interface Choice {
   name: string;
-  code: string;
+  code: string | JSX.Element;
 }
 
 const Basic: React.FC = () => {
+  const { animalData } = useContext<AnimalContextType>(AnimalContext);
   const [selectedChoice, setSelectedChoice] = useState<Choice | null>(null);
-  const [sidebarVisible, setSidebarVisible] = useState(false); // State for sidebar visibility
-  const [dialogVisible, setDialogVisible] = useState(false); // State for dialog visibility
+  const [sidebarVisible, setSidebarVisible] = useState(false);
+  const [dialogVisible, setDialogVisible] = useState(false);
+  const [filteredData, setFilteredData] = useState<any[]>([]);
+  const [isHovered, setIsHovered] = useState(false); // State for hover effect
 
-  // Toggle sidebar visibility
+  useEffect(() => {
+    setFilteredData(animalData);
+  }, [animalData]);
+
   const toggleSidebar = () => {
     setSidebarVisible(!sidebarVisible);
   };
 
-  // Show dialog containing BingMap when Geofence button is clicked
   const handleGeofenceClick = () => {
     setDialogVisible(true);
-    setSidebarVisible(false); // Optionally hide sidebar when geofence is clicked
+    setSidebarVisible(false);
   };
 
-  // Hide dialog
   const hideDialog = () => {
     setDialogVisible(false);
   };
 
+  const handleFilterChange = (filters) => {
+    const filteredAnimals = animalData.filter((animal) => {
+      let matches = true;
+      if (filters.name) {
+        matches =
+          matches &&
+          animal.animal.name.toLowerCase().includes(filters.name.toLowerCase());
+      }
+      if (filters.species) {
+        matches = matches && animal.animal.species === filters.species;
+      }
+      if (filters.gender) {
+        matches = matches && animal.animal.gender === filters.gender;
+      }
+      if (filters.animalId) {
+        matches = matches && animal.animal.id.toString() === filters.animalId;
+      }
+      return matches;
+    });
+
+    setFilteredData(filteredAnimals);
+  };
+
+  const uniqueSpecies = [
+    ...new Set(animalData.map((animal) => animal.animal.species)),
+  ];
+  const uniqueGenders = [
+    ...new Set(animalData.map((animal) => animal.animal.gender)),
+  ];
+  const animalOptions = animalData.map((animal) => ({
+    id: animal.animal.id,
+    name: animal.animal.name,
+  }));
+
   return (
     <>
       <div>
-        <Navbar toggleSidebar={toggleSidebar} />{" "}
-        {/* Pass toggleSidebar function */}
+        <Navbar toggleSidebar={toggleSidebar} />
       </div>
       <CustomSidebar
         visible={sidebarVisible}
         onHide={() => setSidebarVisible(false)}
-        onGeofenceClick={handleGeofenceClick} // Pass handleGeofenceClick function
+        onGeofenceClick={handleGeofenceClick}
       />
       <div className="grid">
-        <div className="col-2 pt-2">
-          <div className="text-center p-3 border-round-sm bg-gray-800 font-bold">
-            <TemplateDemo onChoiceSelect={setSelectedChoice} />
+        <div
+          className={`col-${isHovered ? 2 : 1}`} // Apply conditional class
+          onMouseEnter={() => setIsHovered(true)} // Handle mouse enter
+          onMouseLeave={() => setIsHovered(false)} // Handle mouse leave
+        >
+          <div className="text-center border-round-sm surface-ground font-bold">
+            <TemplateDemo
+              onChoiceSelect={setSelectedChoice}
+              isHovered={isHovered}
+            />
           </div>
         </div>
         <div className="grid">
-          <div className="col-8" style={{ width: "800px", height: "500px" }}>
+          <div
+            className={`col-${isHovered ? 8 : 9} `}
+            // onMouseEnter={() => setIsHovered(true)} // Handle mouse enter
+            // onMouseLeave={() => setIsHovered(false)} // Handle mouse leave
+            style={{ width: "1000px", height: "500px" }}
+          >
             <div className="text-center p-2 border-round-sm bg-blue-100 font-bold">
-              <MainContent selectedChoice={selectedChoice} customerToken={""} />
+              <MainContent
+                filterdDatas={filteredData}
+                selectedChoice={selectedChoice}
+                customerToken={""}
+              />
             </div>
           </div>
         </div>
-        <div className="col-2">
-          <div className="text-center p-2 border-round-sm primary-reverse font-bold">
-            <Notifications />
+        <div className={`col-${isHovered ? 1 : 1} `}>
+          <div className="text-center p-2 border-round-sm font-bold">
+            <FilterPanel
+              onFilterChange={handleFilterChange}
+              speciesOptions={uniqueSpecies}
+              genderOptions={uniqueGenders}
+              animalOptions={animalOptions}
+            />
           </div>
         </div>
       </div>
-
-      {/* Dialog containing BingMap */}
+      <MapComponent filterdDatas={filteredData} />
       <ResizableDialog visible={dialogVisible} onHide={hideDialog} />
+      <MainContent
+        selectedChoice={undefined}
+        customerToken={""}
+        filterdDatas={filteredData}
+      />
     </>
   );
 };

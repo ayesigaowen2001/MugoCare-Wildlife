@@ -1,124 +1,66 @@
 import React, { useEffect, useState } from "react";
-
+import * as atlas from "azure-maps-control";
+import * as atlasDrawing from "azure-maps-drawing-tools";
+import "./Geofence.css";
 const BingMap: React.FC = () => {
-  const [drawingManager, setDrawingManager] = useState<any>(null); // State to hold the drawing manager instance
-  const [geofenceCoordinates, setGeofenceCoordinates] = useState<any[]>([]); // State to store geofence coordinates
+  const [map, setMap] = useState<atlas.Map | null>(null);
+  const [drawingManager, setDrawingManager] =
+    useState<atlasDrawing.drawing.DrawingManager | null>(null);
 
   useEffect(() => {
-    const loadBingMapScript = async () => {
-      try {
-        const bingKey = "**************";
+    const initMap = async () => {
+      const mapInstance = new atlas.Map("myMap", {
+        center: [-90, 35],
+        zoom: 3,
+        view: "Auto",
+        authOptions: {
+          authType: atlas.AuthenticationType.subscriptionKey,
+          subscriptionKey:
+            "FA7eAz9G0n0NBadtHY6FiE4aRXFFQNbBYtV07fZvcmbCTjWUY5LzJQQJ99AGACYeBjFvlMgSAAAgAZMPtri7",
+        },
+        accessibilityVerbose: false,
+      });
 
-        const script = document.createElement("script");
-        script.src = `https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=${bingKey}`;
-        script.async = true;
-        script.defer = true;
+      mapInstance.events.add("ready", () => {
+        const dm = new atlasDrawing.drawing.DrawingManager(mapInstance, {
+          interactionType: atlasDrawing.drawing.DrawingInteractionType.hybrid,
+          toolbar: new atlasDrawing.control.DrawingToolbar({
+            position: "top-right",
+          }),
+        });
 
-        script.onload = () => {
-          window.GetMap = () => {
-            const mapElement = document.getElementById("myMap");
-            if (mapElement) {
-              const map = new window.Microsoft.Maps.Map(mapElement, {
-                credentials: bingKey,
-              });
+        function getDrawnShapes() {
+          const source = dm.getSource();
+          const shapesJson = JSON.stringify(source.toJson(), null, "    ");
+          console.log(shapesJson);
+        }
 
-              window.Microsoft.Maps.loadModule(
-                "Microsoft.Maps.DrawingTools",
-                () => {
-                  const tools = new window.Microsoft.Maps.DrawingTools(map);
-                  setDrawingManager(tools);
+        getDrawnShapes();
+        setDrawingManager(dm);
+      });
 
-                  tools.showDrawingManager((manager: any) => {
-                    setDrawingManager(manager); // Storing drawing manager instance in state
-                  });
-
-                  // Attaching event handler for drawing end
-                  window.Microsoft.Maps.Events.addHandler(
-                    tools,
-                    "drawingEnded",
-                    handleDrawingEnded
-                  );
-                }
-              );
-            } else {
-              console.error("Error: Element with ID 'myMap' not found.");
-            }
-          };
-        };
-
-        script.onerror = (error) => {
-          console.error("Error loading Bing Maps script:", error);
-        };
-
-        document.body.appendChild(script);
-      } catch (error) {
-        console.error("Error loading Bing Maps script:", error);
-      }
+      setMap(mapInstance);
     };
 
-    loadBingMapScript();
-
-    return () => {};
-  }, []);
-
-  const handleDrawingEnded = (event: any) => {
-    const shapes = event.shapes;
-    const coordinates = shapes
-      .map((shape: any) => {
-        if (
-          shape.getType() ===
-            window.Microsoft.Maps.DrawingTools.ShapeType.polyline ||
-          shape.getType() ===
-            window.Microsoft.Maps.DrawingTools.ShapeType.polygon
-        ) {
-          const vertices = shape.getLocations();
-          const bounds =
-            window.Microsoft.Maps.LocationRect.fromLocations(vertices);
-
-          return {
-            northLatitude: bounds.getNorth().toFixed(4),
-            southLatitude: bounds.getSouth().toFixed(4),
-            eastLongitude: bounds.getEast().toFixed(4),
-            westLongitude: bounds.getWest().toFixed(4),
-          };
-        }
-        return null;
-      })
-      .filter((coords: any) => coords !== null);
-
-    setGeofenceCoordinates(coordinates);
-    console.log("Geofence coordinates:", coordinates);
-  };
-
-  const setDrawingMode = (mode: string) => {
-    if (drawingManager) {
-      drawingManager.setDrawingMode(
-        window.Microsoft.Maps.DrawingTools.DrawingMode[mode]
-      );
+    if (!map) {
+      initMap();
     }
-  };
 
-  const handleSubmitGeofence = () => {
-    console.log("Submitting geofence with coordinates:", geofenceCoordinates);
-    // Here you can perform additional logic to send the geofence coordinates to a backend or perform other actions
-  };
+    return () => {
+      map?.dispose();
+    };
+  }, [map]);
 
   return (
-    <div>
-      <div
-        id="myMap"
-        style={{ width: "100%", height: "600px", backgroundColor: "gray" }}
-      ></div>
-      <br />
-      <div>
-        <button onClick={() => setDrawingMode("polyline")}>
-          Draw Polyline
-        </button>
-        <button onClick={() => setDrawingMode("polygon")}>Draw Polygon</button>
-      </div>
-      <br />
-      <button onClick={handleSubmitGeofence}>Submit Geofence</button>
-    </div>
+    <div
+      id="myMap"
+      // style={{
+      //   position: "relative",
+      //   width: "auto",
+      //   minWidth: "290px",
+      //   height: "600px",
+      // }}
+    />
   );
 };
 

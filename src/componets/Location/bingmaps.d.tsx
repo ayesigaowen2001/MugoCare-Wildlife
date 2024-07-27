@@ -1,166 +1,206 @@
-import React, { useEffect, useRef, useContext, useState } from "react";
-import {
-  AnimalContext,
-  AnimalContextType,
-} from "../../Data/StateManagement/animalContext";
-import RouteDialog from "./RouteDialogbox"; // Import your dialog component
+import React, { useState, useEffect, useRef } from "react";
+import * as atlas from "azure-maps-control";
+import "./Location.css";
 
-declare global {
-  interface Window {
-    Microsoft: any;
-    GetMap: (() => void) | null;
-  }
+interface Data {
+  filterdDatas: any[];
 }
 
-const MapComponent: React.FC = () => {
-  const mapRef = useRef<HTMLDivElement | null>(null);
-  const { animalData } = useContext<AnimalContextType>(AnimalContext);
+const MapComponent: React.FC<Data> = ({ filterdDatas }) => {
+  const mapRef = useRef<atlas.Map | null>(null);
+  const divRef = useRef<HTMLDivElement | null>(null);
   const [scriptError, setScriptError] = useState<boolean>(false);
-  const [routeDialogOpen, setRouteDialogOpen] = useState<boolean>(false);
-  const [routeLocations, setRouteLocations] = useState<
-    { latitude: number; longitude: number }[]
-  >([]);
+  const [symbolLayers, setSymbolLayers] = useState<atlas.layer.SymbolLayer[]>(
+    []
+  );
+
+  const calculateMapCenter = (
+    locations: { latitude: number; longitude: number }[]
+  ) => {
+    let sumLat = 0;
+    let sumLng = 0;
+    locations.forEach((loc) => {
+      sumLat += loc.latitude;
+      sumLng += loc.longitude;
+    });
+    return [sumLng / locations.length, sumLat / locations.length];
+  };
 
   useEffect(() => {
-    const loadMap = () => {
-      if (!window.Microsoft || !window.Microsoft.Maps) {
-        console.error("Bing Maps SDK not loaded.");
-        return;
-      }
-
-      const mapOptions = {
-        credentials: "YOUR_BING_MAPS_API_KEY", // Replace with your Bing Maps API key
-        center: new window.Microsoft.Maps.Location(47.6, -122.33), // Example initial center
-        mapTypeId: window.Microsoft.Maps.MapTypeId.road,
-        zoom: 10,
-      };
-
-      const map = new window.Microsoft.Maps.Map(mapRef.current, mapOptions);
-
-      const infobox = new window.Microsoft.Maps.Infobox(map.getCenter(), {
-        visible: false,
+    if (divRef.current) {
+      const map = new atlas.Map(divRef.current, {
+        authOptions: {
+          authType: atlas.AuthenticationType.subscriptionKey,
+          subscriptionKey:
+            "FA7eAz9G0n0NBadtHY6FiE4aRXFFQNbBYtV07fZvcmbCTjWUY5LzJQQJ99AGACYeBjFvlMgSAAAgAZMPtri7",
+        },
       });
 
-      infobox.setMap(map);
+      map.events.add("ready", () => {
+        mapRef.current = map;
 
-      let pushpinLocations: Microsoft.Maps.Location[] = [];
+        const zoomMap = (offset: number) => {
+          const cam = map.getCamera();
+          map.setCamera({
+            zoom: Math.max(
+              cam.minZoom,
+              Math.min(cam.maxZoom, cam.zoom + offset)
+            ),
+            type: "ease",
+            duration: 250,
+          });
+        };
 
-      animalData.forEach((animal) => {
+        const pitchStep = 10;
+        const pitchMap = (offset: number) => {
+          map.setCamera({
+            pitch: Math.max(
+              0,
+              Math.min(60, map.getCamera().pitch + offset * pitchStep)
+            ),
+            type: "ease",
+            duration: 250,
+          });
+        };
+
+        const bearingStep = 15;
+        const rotateMap = (offset: number) => {
+          map.setCamera({
+            bearing: map.getCamera().bearing + offset * bearingStep,
+            type: "ease",
+            duration: 250,
+          });
+        };
+
+        const mapStyleChanged = (elm: any) => {
+          map.setStyle({
+            style: elm.target.value,
+          });
+        };
+
+        document
+          .querySelector(".zoom-in")
+          ?.addEventListener("click", () => zoomMap(1));
+        document
+          .querySelector(".zoom-out")
+          ?.addEventListener("click", () => zoomMap(-1));
+        document
+          .querySelector(".increase-pitch")
+          ?.addEventListener("click", () => pitchMap(1));
+        document
+          .querySelector(".decrease-pitch")
+          ?.addEventListener("click", () => pitchMap(-1));
+        document
+          .querySelector(".rotate-left")
+          ?.addEventListener("click", () => rotateMap(1));
+        document
+          .querySelector(".rotate-right")
+          ?.addEventListener("click", () => rotateMap(-1));
+        document
+          .querySelector(".map-style")
+          ?.addEventListener("change", mapStyleChanged);
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (mapRef.current) {
+      const map = mapRef.current;
+      const allLocations: { latitude: number; longitude: number }[] = [];
+
+      filterdDatas.forEach((animal) => {
         if (animal.gps_locations.length > 0) {
           const lastLocations = animal.gps_locations.slice(-6).reverse();
-
-          const routeLocations = lastLocations.map((loc: any) => ({
-            latitude: parseFloat(loc.latitude),
-            longitude: parseFloat(loc.longitude),
-          }));
-
-          const pinLocation = new window.Microsoft.Maps.Location(
-            parseFloat(lastLocations[0].latitude),
-            parseFloat(lastLocations[0].longitude)
-          );
-
-          const pin = new window.Microsoft.Maps.Pushpin(pinLocation);
-
-          pin.metadata = {
-            title: animal.animal.name,
-            description: `Species: ${animal.animal.species}, Gender: ${animal.animal.gender}`,
-            routeLocations: routeLocations,
-          };
-
-          window.Microsoft.Maps.Events.addHandler(pin, "click", (e: any) => {
-            if (e.target.metadata) {
-              infobox.setOptions({
-                location: e.target.getLocation(),
-                title: e.target.metadata.title,
-                description: e.target.metadata.description,
-                visible: true,
+          lastLocations.forEach(
+            (loc: { latitude: string; longitude: string }) => {
+              allLocations.push({
+                latitude: parseFloat(loc.latitude),
+                longitude: parseFloat(loc.longitude),
               });
             }
-          });
-
-          window.Microsoft.Maps.Events.addHandler(pin, "dblclick", (e: any) => {
-            if (
-              e.target.metadata &&
-              e.target.metadata.routeLocations &&
-              e.target.metadata.routeLocations.length > 0
-            ) {
-              setRouteLocations(e.target.metadata.routeLocations);
-              setRouteDialogOpen(true);
-            }
-          });
-
-          map.entities.push(pin);
-          pushpinLocations.push(pin.getLocation());
+          );
         }
       });
 
-      // Calculate the center of all pushpin locations
-      if (pushpinLocations.length > 0) {
-        let bounds =
-          window.Microsoft.Maps.LocationRect.fromLocations(pushpinLocations);
-        map.setView({ bounds: bounds, padding: 40 });
-      }
-    };
+      const mapCenter = calculateMapCenter(allLocations);
+      map.setCamera({
+        center: mapCenter,
+        zoom: 10,
+      });
 
-    const loadBingMapsScript = () => {
-      const existingScript = document.querySelector(
-        `script[src*="bing.com/api/maps/mapcontrol"]`
-      );
+      filterdDatas.forEach((animal) => {
+        if (animal.gps_locations.length > 0) {
+          const lastLocations = animal.gps_locations.slice(-6).reverse();
+          const lastLocation = lastLocations[lastLocations.length - 1];
+          const point = new atlas.data.Point([
+            parseFloat(lastLocation.longitude),
+            parseFloat(lastLocation.latitude),
+          ]);
 
-      if (!existingScript) {
-        const script = document.createElement("script");
-        script.type = "text/javascript";
-        script.src = `https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=YOUR_BING_MAPS_API_KEY`; // Replace with your Bing Maps API key
-        script.async = true;
-        script.defer = true;
+          const dataSource = new atlas.source.DataSource();
+          dataSource.add(point);
+          map.sources.add(dataSource);
 
-        script.onload = () => {
-          setScriptError(false);
-          window.GetMap = loadMap;
-          loadMap();
-        };
+          const symbolLayer = new atlas.layer.SymbolLayer(dataSource);
+          map.layers.add(symbolLayer);
+          setSymbolLayers((prevLayers) => [...prevLayers, symbolLayer]);
 
-        script.onerror = () => {
-          console.error("Failed to load Bing Maps SDK.");
-          setScriptError(true);
-        };
-
-        document.body.appendChild(script);
-
-        return () => {
-          if (script.parentNode) {
-            script.parentNode.removeChild(script);
-          }
-          window.GetMap = null;
-        };
-      } else {
-        window.GetMap = loadMap;
-        loadMap();
-
-        return () => {
-          window.GetMap = null;
-        };
-      }
-    };
-
-    const cleanup = loadBingMapsScript();
-
-    return cleanup;
-  }, [animalData]);
+          map.events.add("click", symbolLayer, (e) => {
+            if (e.shapes && e.shapes.length > 0) {
+              const popup = new atlas.Popup({
+                content: `<div><h3>${animal.animal.name}</h3><p>Species: ${animal.animal.species}, Gender: ${animal.animal.gender}</p></div>`,
+                position: point.coordinates,
+              });
+              popup.open(map);
+            }
+          });
+        }
+      });
+    }
+  }, [filterdDatas]);
 
   return (
     <div>
-      {scriptError && <div>Error loading Bing Maps SDK. Please try again.</div>}
+      {scriptError && (
+        <div>Error loading Azure Maps SDK. Please try again.</div>
+      )}
       <div
-        id="mapContainer"
-        ref={mapRef}
-        style={{ position: "relative", width: "100%", height: "600px" }}
-      ></div>
-      <RouteDialog
-        isOpen={routeDialogOpen}
-        onClose={() => setRouteDialogOpen(false)}
-        routeLocations={routeLocations}
-      />
+        id="myMap"
+        ref={divRef}
+        style={{ position: "relative", width: "50", height: "430px" }}
+        className="mapContainer"
+      >
+        <div className="controlContainer">
+          <button className="navButton zoom-in" title="Zoom In">
+            +
+          </button>
+          <button className="navButton zoom-out" title="Zoom Out">
+            ⚊
+          </button>
+          <button className="navButton decrease-pitch" title="Decrease Pitch">
+            🠗
+          </button>
+          <button className="navButton increase-pitch" title="Increase Pitch">
+            🠕
+          </button>
+          <button className="navButton rotate-left" title="Rotate Left">
+            ⟲
+          </button>
+          <button className="navButton rotate-right" title="Rotate Right">
+            ⟳
+          </button>
+          <select className="navButton navSelect map-style" title="Map Style">
+            <option value="road" selected>
+              Road
+            </option>
+            <option value="grayscale_dark">Dark Grayscale</option>
+            <option value="grayscale_light">Light Grayscale</option>
+            <option value="night">Night</option>
+            <option value="satellite">Satellite</option>
+            <option value="satellite_road_labels">Hybrid</option>
+          </select>
+        </div>
+      </div>
     </div>
   );
 };

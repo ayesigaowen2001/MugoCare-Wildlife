@@ -3,12 +3,15 @@
     flex-direction: column;
     flex-wrap: wrap;
     max-height: calc(100vh - 150px); /* Adjust based on your layout */
+   
   }
   
   .custom-megamenu .p-megamenu-grid {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+    background-color: #f7fcdc;
+    border-radius: 10px;
   }
   
   .custom-megamenu .p-megamenu-column {
@@ -31,4 +34,30 @@
     font-size: 2em;
     margin-bottom: 0.5rem;
   }
+  .p-button-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .grid-template {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1em;
+  }
+  
+  .icon-style {
+    font-size: 2em;
+    border-radius: 50%;
+    background-color: white;
+    padding: 0.5em;
+    color: black;
+  }
+  
+  .label-style {
+    margin-top: 0.5em;
+    color: black;
+    text-align: center;
+    font-size: 0.85em;
+  }
+  
   

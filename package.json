@@ -7,8 +7,8 @@
   "devDependencies": {
     "@types/axios": "^0.14.0",
     "@types/node": "^20.14.10",
-    "@types/react": "^18.2.56",
-    "@types/react-dom": "^18.2.19",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^7.0.2",
     "@typescript-eslint/parser": "^7.0.2",
     "@vitejs/plugin-react": "^4.2.1",
@@ -46,6 +46,7 @@
     "primereact": "^10.6.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-material-symbols": "^4.4.0",
     "react-pro-sidebar": "^1.1.0",
     "react-router-dom": "^6.23.0",
     "react-transition-group": "^4.4.5",

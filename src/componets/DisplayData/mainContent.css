@@ -1,0 +1,11 @@
+.custom-card-title {
+    font-size: 24px; /* Adjust the font size */
+    font-weight: bold; /* Make the font bold */
+    color: #333; /* Set the text color */
+    text-align: center; /* Center align the title */
+    padding: 10px ; 
+    background-color: #f5f5f5; /* Set a background color */
+    border-bottom: 1px solid #ddd; /* Add a bottom border */
+    
+  }
+  

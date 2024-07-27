@@ -4,17 +4,33 @@ import MainContent from "../../componets/DisplayData/MainContent"; // Assuming M
 
 interface Choice {
   name: string;
-  code: string;
+  code: string | JSX.Element;
 }
 
-const App: React.FC = () => {
+interface AppProps {
+  filterdDatas: any[];
+}
+
+const App: React.FC<AppProps> = ({ filterdDatas }) => {
   const [selectedChoice, setSelectedChoice] = useState<Choice | null>(null);
+  const [isHovered, setIsHovered] = useState(false);
 
   return (
     <div>
-      <TemplateDemo onChoiceSelect={setSelectedChoice} />
-      {/* Pass customerToken as a prop to MainContent */}
-      <MainContent selectedChoice={selectedChoice} customerToken={""} />
+      <div
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        <TemplateDemo
+          onChoiceSelect={setSelectedChoice}
+          isHovered={isHovered}
+        />
+      </div>
+      <MainContent
+        filterdDatas={filterdDatas}
+        selectedChoice={selectedChoice}
+        customerToken={""}
+      />
     </div>
   );
 };

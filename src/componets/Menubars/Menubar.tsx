@@ -3,9 +3,9 @@ import { Menubar } from "primereact/menubar";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import "primereact/resources/themes/saga-blue/theme.css"; // Import PrimeReact theme
-import "primereact/resources/primereact.min.css"; // Import PrimeReact CSS
-// Import PrimeFlex
-
+import "primereact/resources/primereact.min.css"; // Import PrimeReact
+import "./Nav.css";
+import { classNames } from "primereact/utils";
 interface MenubarProps {
   toggleSidebar: () => void;
 }
@@ -30,9 +30,8 @@ const Navbar: React.FC<MenubarProps> = ({ toggleSidebar }) => {
     <div className="flex flex-row flex-wrap items-center">
       <Button
         icon="pi pi-bars"
-        rounded
         severity="secondary"
-        className="mx-2 m-auto"
+        className="ml-6 m-auto rounded pi-button"
         onClick={toggleSidebar} // Toggle sidebar function
       />
       <h4 className="mx-2 font-italic m-auto">Wildlife Tracker</h4>
@@ -40,19 +39,19 @@ const Navbar: React.FC<MenubarProps> = ({ toggleSidebar }) => {
   );
 
   const centerContent = (
-    <div className="p-inputgroup mx-2 h-3rem m-auto">
+    <div className="p-inputgroup mx-2 h-3rem m-auto ">
       <InputText placeholder="Enter Query" />
       <Button icon="pi pi-search" className="p-button-warning " />
     </div>
   );
 
   return (
-    <div className="card bg-teal-100">
+    <div className="card bg-black-alpha-80">
       {" "}
       {/* PrimeFlex class for background color */}
       <div
         className="flex justify-content-between items-center"
-        style={{ width: "100%" }}
+        style={{ width: "100%", height: 60 }}
       >
         {startContent}
         <div className="flex-1 flex justify-content-center">
@@ -60,7 +59,8 @@ const Navbar: React.FC<MenubarProps> = ({ toggleSidebar }) => {
         </div>
         <Menubar
           model={items}
-          className="flex justify-content-end bg-teal-100"
+          className="flex justify-content-end   text-white m-auto"
+          style={{ height: "40px" }}
         />{" "}
         {/* PrimeFlex class for background color */}
       </div>
