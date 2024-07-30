@@ -4,7 +4,7 @@ import * as atlasDrawing from "azure-maps-drawing-tools";
 import "./Geofence.css";
 const BingMap: React.FC = () => {
   const [map, setMap] = useState<atlas.Map | null>(null);
-  const [drawingManager, setDrawingManager] =
+  const [, setDrawingManager] =
     useState<atlasDrawing.drawing.DrawingManager | null>(null);
 
   useEffect(() => {

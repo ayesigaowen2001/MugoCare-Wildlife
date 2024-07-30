@@ -9,10 +9,8 @@ interface Data {
 const MapComponent: React.FC<Data> = ({ filterdDatas }) => {
   const mapRef = useRef<atlas.Map | null>(null);
   const divRef = useRef<HTMLDivElement | null>(null);
-  const [scriptError, setScriptError] = useState<boolean>(false);
-  const [symbolLayers, setSymbolLayers] = useState<atlas.layer.SymbolLayer[]>(
-    []
-  );
+  const [scriptError] = useState<boolean>(false);
+  const [, setSymbolLayers] = useState<atlas.layer.SymbolLayer[]>([]);
 
   const calculateMapCenter = (
     locations: { latitude: number; longitude: number }[]

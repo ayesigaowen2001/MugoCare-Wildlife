@@ -116,7 +116,11 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUpSuccess }) => {
             </div>
           </div>
           <div className="p-field">
-            <Button type="submit" className="mr-6" label="Sign Up" />
+            <Button
+              type="submit"
+              className="mr-6 rounded"
+              label={loading ? "Signing Up..." : "Sign Up"}
+            />
             <a
               target="_blank"
               rel="noopener noreferrer"
@@ -128,11 +132,6 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUpSuccess }) => {
             </a>
           </div>
         </form>
-        {loading && (
-          <div className="p-d-flex p-jc-center p-ai-center">
-            <i className="pi pi-spin pi-spinner" style={{ fontSize: "2em" }} />
-          </div>
-        )}
       </Card>
     </div>
   );

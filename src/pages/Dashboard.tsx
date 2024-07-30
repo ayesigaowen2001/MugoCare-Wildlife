@@ -3,9 +3,9 @@ import Navbar from "../componets/Menubars/Menubar";
 import TemplateDemo from "../componets/DisplayData/Content";
 import MainContent from "../componets/DisplayData/MainContent";
 import CustomSidebar from "../componets/Sidebars/Sidebar";
-import ResizableDialog from "../Geofencing/geoofencingDialogbox";
+//import ResizableDialog from "../Geofencing/geoofencingDialogbox";
 import FilterPanel from "../componets/Notifications/Notifications";
-import MapComponent from "../componets/Location/bingmaps.d";
+//import MapComponent from "../componets/Location/bingmaps.d";
 import {
   AnimalContext,
   AnimalContextType,
@@ -23,7 +23,7 @@ const Basic: React.FC = () => {
   const { animalData } = useContext<AnimalContextType>(AnimalContext);
   const [selectedChoice, setSelectedChoice] = useState<Choice | null>(null);
   const [sidebarVisible, setSidebarVisible] = useState(false);
-  const [dialogVisible, setDialogVisible] = useState(false);
+  const [, setDialogVisible] = useState(false);
   const [filteredData, setFilteredData] = useState<any[]>([]);
   const [isHovered, setIsHovered] = useState(false); // State for hover effect
 
@@ -38,10 +38,6 @@ const Basic: React.FC = () => {
   const handleGeofenceClick = () => {
     setDialogVisible(true);
     setSidebarVisible(false);
-  };
-
-  const hideDialog = () => {
-    setDialogVisible(false);
   };
 
   const handleFilterChange = (filters) => {

@@ -32,7 +32,6 @@ const LogIn: React.FC = () => {
         console.log(response.data);
         // Update the animalData in the context
         setAnimalData(response.data.animals);
-        //console.log(setAnimalData);
         navigate("/dashboard");
       } else {
         setLoginError("Login failed. Please try again.");
@@ -78,10 +77,12 @@ const LogIn: React.FC = () => {
             </div>
           </div>
           <div className="p-field">
-            <Button className="mt-3" type="submit" label="Log In" />
+            <Button
+              className="mt-3 rounded"
+              type="submit"
+              label={loading ? "Loading..." : "Log In"}
+            />
             <a
-              // target="_blank"
-              // rel="noopener noreferrer"
               className="p-button font-bold p-2 ml-4"
               onClick={() => navigate("/signup")}
               style={{ color: "white" }}
@@ -90,11 +91,6 @@ const LogIn: React.FC = () => {
             </a>
           </div>
         </form>
-        {loading && (
-          <div className="p-d-flex p-jc-center p-ai-center">
-            <i className="pi pi-spin pi-spinner" style={{ fontSize: "2em" }} />
-          </div>
-        )}
       </Card>
     </div>
   );
