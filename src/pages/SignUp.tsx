@@ -53,8 +53,8 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUpSuccess }) => {
 
   return (
     <div className="flex justify-content-center p-d-flex p-jc-center p-ai-center signup-container">
-      <Card className="signup-card">
-        <h2>Sign Up</h2>
+      <Card className="signup-card m-6">
+        <h2 className="ml-8">Sign Up</h2>
         <form onSubmit={handleSignupSubmit}>
           {signUpError && <div className="error">{signUpError}</div>}
           <div className="p-grid p-fluid">
@@ -118,10 +118,11 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSignUpSuccess }) => {
           <div className="p-field">
             <Button type="submit" className="mr-6" label="Sign Up" />
             <a
-              href="/login"
               target="_blank"
               rel="noopener noreferrer"
               className="p-button font-bold p-2"
+              style={{ color: "white" }}
+              onClick={() => navigate("/login")}
             >
               already have an account?
             </a>

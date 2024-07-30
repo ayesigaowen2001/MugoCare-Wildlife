@@ -79,7 +79,7 @@ const Basic: React.FC = () => {
   }));
 
   return (
-    <>
+    <div className="overflow-hidden">
       <div>
         <Navbar toggleSidebar={toggleSidebar} />
       </div>
@@ -128,14 +128,14 @@ const Basic: React.FC = () => {
           </div>
         </div>
       </div>
-      <MapComponent filterdDatas={filteredData} />
-      <ResizableDialog visible={dialogVisible} onHide={hideDialog} />
-      <MainContent
+      {/* <MapComponent filterdDatas={filteredData} /> */}
+      {/* <ResizableDialog visible={dialogVisible} onHide={hideDialog} /> */}
+      {/* <MainContent
         selectedChoice={undefined}
         customerToken={""}
         filterdDatas={filteredData}
-      />
-    </>
+      /> */}
+    </div>
   );
 };
 

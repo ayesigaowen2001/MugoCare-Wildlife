@@ -48,7 +48,7 @@ const LogIn: React.FC = () => {
   return (
     <div className="flex justify-content-center p-d-flex p-jc-center p-ai-center m-3 login-container">
       <Card className="login-card m-8">
-        <h2 className="m-4">Log In</h2>
+        <h2 className="ml-8 mb-8">Log In</h2>
         <form onSubmit={handleLoginSubmit}>
           {loginError && <div className="error">{loginError}</div>}
           <div className="p-grid p-fluid">
@@ -78,7 +78,16 @@ const LogIn: React.FC = () => {
             </div>
           </div>
           <div className="p-field">
-            <Button type="submit" label="Log In" />
+            <Button className="mt-3" type="submit" label="Log In" />
+            <a
+              // target="_blank"
+              // rel="noopener noreferrer"
+              className="p-button font-bold p-2 ml-4"
+              onClick={() => navigate("/signup")}
+              style={{ color: "white" }}
+            >
+              Don't have an account?
+            </a>
           </div>
         </form>
         {loading && (

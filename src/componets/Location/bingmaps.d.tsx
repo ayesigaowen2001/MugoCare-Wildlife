@@ -167,7 +167,7 @@ const MapComponent: React.FC<Data> = ({ filterdDatas }) => {
       <div
         id="myMap"
         ref={divRef}
-        style={{ position: "relative", width: "50", height: "430px" }}
+        style={{ position: "relative", width: "500", height: "400" }}
         className="mapContainer"
       >
         <div className="controlContainer">

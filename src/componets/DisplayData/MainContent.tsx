@@ -47,7 +47,7 @@ const MainContent: React.FC<MainContentProps> = ({
     >
       {selectedChoice && content && (
         <Card
-          className="w-full h-full"
+          className="w-full h-full "
           header={
             <div className="custom-card-title mt-2">{selectedChoice.name}</div>
           }

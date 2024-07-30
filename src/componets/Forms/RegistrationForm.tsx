@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
-import { Card } from "primereact/card";
+import "./registration.css";
 import axios from "axios";
 
 interface AnimalRegistrationFormProps {
@@ -65,8 +65,8 @@ const AnimalRegistrationForm: React.FC<AnimalRegistrationFormProps> = () => {
       {/* <h2>Register Animal</h2> */}
       <form
         onSubmit={handleAnimalSubmit}
-        style={{ width: 450 }}
-        className="ml-8"
+        style={{ width: 600 }}
+        className="form-group"
       >
         {registrationError && <div className="error">{registrationError}</div>}
         <div className="p-grid p-fluid">
